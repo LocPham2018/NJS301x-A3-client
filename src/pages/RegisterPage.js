@@ -8,7 +8,7 @@ import { SERVER_URL } from '../others/request';
 
 const RegisterPage = () => {
 	const navigate = useNavigate();
-	const { sendRequest: signup } = useHttp();
+	const { isLoading, sendRequest: signup } = useHttp();
 	const { formState, inputHandler, resetInput } = useForm({
 		email: '',
 		password: '',
@@ -43,6 +43,7 @@ const RegisterPage = () => {
 	return (
 		<AuthForm
 			register
+			isLoading={isLoading}
 			formState={formState}
 			onChange={inputHandler}
 			onSubmit={registerHandler}

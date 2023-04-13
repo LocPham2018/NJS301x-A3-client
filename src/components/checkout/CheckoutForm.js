@@ -1,4 +1,4 @@
-const CheckoutForm = ({ formState, onChange, onSubmit }) => {
+const CheckoutForm = ({ isLoading, formState, onChange, onSubmit }) => {
 	return (
 		<form onSubmit={onSubmit}>
 			<label className="text-uppercase mb-2">Full Name:</label>
@@ -33,7 +33,7 @@ const CheckoutForm = ({ formState, onChange, onSubmit }) => {
 				value={formState.address}
 				onChange={evt => onChange('address', evt.target.value)}
 			/>
-			<button className="btn btn-secondary rounded-0 px-3 py-2">
+			<button disabled={isLoading} className="btn btn-secondary rounded-0 px-3 py-2">
 				Place order
 			</button>
 		</form>

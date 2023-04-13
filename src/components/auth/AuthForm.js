@@ -3,7 +3,9 @@ import ErrorAlert from './ErrorAlert';
 import './auth.css';
 
 // This form is used for both Login and Register page
-const AuthForm = ({ register, formState, onChange, onSubmit, error }) => {
+const AuthForm = (props) => {
+	const { register, isLoading, formState, onChange, onSubmit, error } = props;
+
 	return (
 		<div
 			id="background"
@@ -54,6 +56,7 @@ const AuthForm = ({ register, formState, onChange, onSubmit, error }) => {
 					<button
 						className="w-100 btn btn-secondary p-2 mt-2 text-center text-uppercase rounded-0"
 						type="submit"
+						disabled={isLoading}
 					>
 						{register ? 'Sign Up' : 'Sign In'}
 					</button>

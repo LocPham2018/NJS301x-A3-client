@@ -18,7 +18,7 @@ const CheckoutPage = () => {
 		address: '',
 	});
 	const cart = useSelector(state => state.cart);
-	const { sendRequest: checkout } = useHttp();
+	const { isLoading, sendRequest: checkout } = useHttp();
 	const user = useSelector(state => state.loginUser);
 	const dispatch = useDispatch();
 
@@ -49,6 +49,7 @@ const CheckoutPage = () => {
 				<h2 className="text-uppercase">Checkout</h2>
 			</section>
 			<Checkout
+				isLoading={isLoading}
 				formState={formState}
 				onChange={inputHandler}
 				onSubmit={submitHandler}

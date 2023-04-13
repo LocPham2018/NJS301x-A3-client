@@ -8,7 +8,7 @@ import { SERVER_URL } from '../others/request';
 
 const LoginPage = () => {
 	const navigate = useNavigate();
-	const { sendRequest: login } = useHttp();
+	const { isLoading, sendRequest: login } = useHttp();
 	const { formState, inputHandler, resetInput } = useForm({
 		email: '',
 		password: '',
@@ -40,6 +40,7 @@ const LoginPage = () => {
 
 	return (
 		<AuthForm
+			isLoading={isLoading}
 			formState={formState}
 			onChange={inputHandler}
 			onSubmit={loginHandler}
