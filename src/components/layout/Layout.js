@@ -1,11 +1,11 @@
 import Footer from './Footer';
 import Navbar from './Navbar';
 
-const Layout = props => {
+const Layout = ({ children }) => {
 	return (
 		<>
 			<Navbar />
-			<main className="bg-white text-dark">{props.children}</main>
+			<main className="bg-white text-dark">{children}</main>
 			<Footer />
 		</>
 	);

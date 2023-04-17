@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
+import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 import { actions } from '../../store';
-import { useHttp } from '../../hooks/use-http';
-import { SERVER_URL } from '../../others/request';
+import { useGetRequest, useSubmitRequest } from '../../hooks/use-fetch';
+import { ENDPOINTS, getPostOptions } from '../../others/request';
 
 const Navbar = () => {
 	const navigate = useNavigate();
@@ -14,42 +14,31 @@ const Navbar = () => {
 			: 'link-dark text-decoration-none px-2';
 
 	const dispatch = useDispatch();
-	const { sendRequest: getSessionInfo } = useHttp();
-
-	useEffect(() => {
-		const requestInput = {
-			url: `${SERVER_URL}/auth/session`,
-		};
-
-		getSessionInfo(requestInput, responseData => {
+	const applySessionData = useCallback(
+		responseData => {
 			if (responseData.user) {
 				dispatch(actions.onLogin(responseData.user));
 			}
-		});
-	}, [dispatch, getSessionInfo]);
+		},
+		[dispatch]
+	);
+	useGetRequest(ENDPOINTS.session, applySessionData);
 
 	const loginUser = useSelector(state => state.loginUser);
-	const { onLogout } = actions;
-	const { sendRequest: logout } = useHttp();
+	const { submitRequest } = useSubmitRequest();
 
 	const logoutHandler = () => {
-		const requestInput = {
-			url: `${SERVER_URL}/auth/logout`,
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			credentials: 'include',
-		};
+		const options = getPostOptions();
 
-		logout(requestInput, responseData => {
+		const applyData = responseData => {
 			if (responseData.err) {
 				console.log(responseData.err);
 			}
 			// ON_LOGOUT action
-			dispatch(onLogout());
+			dispatch(actions.onLogout());
 			navigate('/');
-		});
+		};
+		submitRequest(ENDPOINTS.logout, options, applyData);
 	};
 
 	return (

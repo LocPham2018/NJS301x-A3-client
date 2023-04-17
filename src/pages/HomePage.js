@@ -5,7 +5,7 @@ import Trending from '../components/main/Trending';
 import AfterService from '../components/main/AfterService';
 import Contact from '../components/main/Contact';
 
-const HomePage = props => {
+const HomePage = () => {
 	return (
 		<Layout>
 			<Banner />

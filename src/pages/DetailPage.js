@@ -1,30 +1,22 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { useGetRequest } from '../hooks/use-fetch';
 import DetailSection from '../components/detail/DetailSection';
 import Related from '../components/detail/Related';
 import Layout from '../components/layout/Layout';
-import { useHttp } from '../hooks/use-http';
-import { SERVER_URL } from '../others/request';
 
 const DetailPage = () => {
 	const { productId } = useParams();
 	const [product, setProduct] = useState(null);
 	const [related, setRelated] = useState([]);
-	const { sendRequest: fetchProducts } = useHttp();
-
-	useEffect(() => {
-		const requestInput = {
-			url: `${SERVER_URL}/products/${productId}?getRelated=true`,
-		};
-
-		fetchProducts(requestInput, responseData => {
-			if (responseData.success) {
-				setProduct(responseData.product);
-				setRelated(responseData.related);
-			}
-		});
-	}, [fetchProducts, productId]);
+	const applyData = useCallback(responseData => {
+		if (responseData.success) {
+			setProduct(responseData.product);
+			setRelated(responseData.related);
+		}
+	}, []);
+	useGetRequest(`/products/${productId}?getRelated=true`, applyData);
 
 	return (
 		<Layout>

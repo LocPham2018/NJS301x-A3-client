@@ -1,28 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { useGetRequest } from '../hooks/use-fetch';
 import Layout from '../components/layout/Layout';
-import { useHttp } from '../hooks/use-http';
 import OrderTable from '../components/orders/OrderTable';
-import { SERVER_URL } from '../others/request';
+import { ENDPOINTS } from '../others/request';
 
 const History = () => {
 	const { userId } = useParams();
-	const { sendRequest: getOrders } = useHttp();
 	const [orders, setOrders] = useState([]);
-
-	useEffect(() => {
-		const requestInput = {
-			url: `${SERVER_URL}/client/orders/${userId}`,
-		};
-
-		getOrders(requestInput, responseData => {
-			console.log(responseData);
-			if (responseData.success) {
-				setOrders(responseData.orders);
-			}
-		});
-	}, [getOrders, userId]);
+	const applyData = useCallback(responseData => {
+		if (responseData.success) {
+			setOrders(responseData.orders);
+		}
+	}, []);
+	useGetRequest(`${ENDPOINTS.getOrders}/${userId}`, applyData);
 
 	return (
 		<Layout>

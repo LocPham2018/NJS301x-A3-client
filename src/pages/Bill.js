@@ -1,29 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { useHttp } from '../hooks/use-http';
+import { useGetRequest } from '../hooks/use-fetch';
 import BillInfo from '../components/bill/BillInfo';
 import BillTable from '../components/bill/BillTable';
 import Layout from '../components/layout/Layout';
-import { SERVER_URL } from '../others/request';
+import { ENDPOINTS } from '../others/request';
 
 const Bill = () => {
 	const { id } = useParams();
-	const { sendRequest: getOrder } = useHttp();
 	const [order, setOrder] = useState(null);
-
-	useEffect(() => {
-		const requestInput = {
-			url: `${SERVER_URL}/client/orders/bill/${id}`,
-		};
-
-		getOrder(requestInput, responseData => {
-			console.log(responseData);
-			if (responseData.success) {
-				setOrder(responseData.order);
-			}
-		});
-	}, [getOrder, id]);
+	const applyData = useCallback(responseData => {
+		if (responseData.success) {
+			setOrder(responseData.order);
+		}
+	}, []);
+	useGetRequest(`${ENDPOINTS.getBill}/${id}`, applyData);
 
 	return (
 		order && (

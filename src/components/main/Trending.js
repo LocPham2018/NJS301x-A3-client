@@ -1,25 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 
+import { useGetRequest } from '../../hooks/use-fetch';
 import TrendingList from './TrendingList';
-import { useHttp } from '../../hooks/use-http';
 import './trending.css';
-import { SERVER_URL } from '../../others/request';
+import { ENDPOINTS } from '../../others/request';
 
 const Trending = () => {
 	const [products, setProducts] = useState([]);
-	const { sendRequest: fetchProducts } = useHttp();
-
-	useEffect(() => {
-		const requestInput = {
-			url: `${SERVER_URL}/products/all`,
-		};
-
-		fetchProducts(requestInput, responseData => {
-			if (responseData.success) {
-				setProducts(responseData.results);
-			}
-		});
-	}, [fetchProducts]);
+	const applyData = useCallback(responseData => {
+		if (responseData.success) {
+			setProducts(responseData.results);
+		}
+	}, []);
+	useGetRequest(ENDPOINTS.getProducts, applyData);
 
 	return (
 		<section id="trending" className="container-lg">

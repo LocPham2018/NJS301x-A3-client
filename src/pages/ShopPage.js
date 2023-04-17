@@ -1,27 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 
+import { useGetRequest } from '../hooks/use-fetch';
 import Layout from '../components/layout/Layout';
 import CategoriesList from '../components/shop/CategoriesList';
 import ProductList from '../components/shop/ProductList';
-import { useHttp } from '../hooks/use-http';
-import { SERVER_URL } from '../others/request';
+import { ENDPOINTS } from '../others/request';
 
 const ShopPage = () => {
 	const [products, setProducts] = useState([]);
 	const [category, setCategory] = useState('all');
-	const { sendRequest: fetchProducts } = useHttp();
-
-	useEffect(() => {
-		const requestInput = {
-			url: `${SERVER_URL}/products/all`,
-		};
-
-		fetchProducts(requestInput, responseData => {
-			if (responseData.success) {
-				setProducts(responseData.results);
-			}
-		});
-	}, [fetchProducts]);
+	const applyData = useCallback(responseData => {
+		if (responseData.success) {
+			setProducts(responseData.results);
+		}
+	}, []);
+	useGetRequest(ENDPOINTS.getProducts, applyData);
 
 	const filterHandler = category => setCategory(category);
 

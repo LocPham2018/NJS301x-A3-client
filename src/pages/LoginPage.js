@@ -1,31 +1,25 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import AuthForm from '../components/auth/AuthForm';
 import { useForm } from '../hooks/use-form';
-import { useHttp } from '../hooks/use-http';
-import { SERVER_URL } from '../others/request';
+import { useSubmitRequest } from '../hooks/use-fetch';
+import AuthForm from '../components/auth/AuthForm';
+import { ENDPOINTS, getPostOptions } from '../others/request';
 
 const LoginPage = () => {
 	const navigate = useNavigate();
-	const { isLoading, sendRequest: login } = useHttp();
 	const { formState, inputHandler, resetInput } = useForm({
 		email: '',
 		password: '',
 	});
 	const [error, setError] = useState('');
+	const { isLoading, submitRequest } = useSubmitRequest();
 
 	const loginHandler = evt => {
 		evt.preventDefault();
-		// console.log(formState);
-		const requestInput = {
-			url: `${SERVER_URL}/auth/login`,
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(formState),
-		};
+		const options = getPostOptions(formState);
 
-		login(requestInput, responseData => {
+		const applyData = responseData => {
 			if (responseData.err) {
 				return setError(responseData.err);
 			}
@@ -35,7 +29,8 @@ const LoginPage = () => {
 				return resetInput('password');
 			}
 			navigate('/');
-		});
+		};
+		submitRequest(ENDPOINTS.login, options, applyData);
 	};
 
 	return (

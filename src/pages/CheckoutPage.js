@@ -1,13 +1,12 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
+import { actions } from '../store';
+import { useForm } from '../hooks/use-form';
+import { useSubmitRequest } from '../hooks/use-fetch';
 import Layout from '../components/layout/Layout';
 import Checkout from '../components/checkout/Checkout';
-import { useForm } from '../hooks/use-form';
-import { useHttp } from '../hooks/use-http';
-// import { getLoginUser } from '../others/storage';
-import { actions } from '../store';
-import { SERVER_URL } from '../others/request';
+import { ENDPOINTS, getPostOptions } from '../others/request';
 
 const CheckoutPage = () => {
 	const navigate = useNavigate();
@@ -18,20 +17,19 @@ const CheckoutPage = () => {
 		address: '',
 	});
 	const cart = useSelector(state => state.cart);
-	const { isLoading, sendRequest: checkout } = useHttp();
 	const user = useSelector(state => state.loginUser);
 	const dispatch = useDispatch();
+	const { isLoading, submitRequest } = useSubmitRequest();
 
 	const submitHandler = evt => {
 		evt.preventDefault();
-		const requestInput = {
-			url: `${SERVER_URL}/client/checkout`,
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ userId: user._id, cart, ...formState }),
-		};
+		const options = getPostOptions({
+			userId: user._id,
+			cart,
+			...formState,
+		});
 
-		checkout(requestInput, responseData => {
+		const applyData = responseData => {
 			if (responseData.err) {
 				return alert(responseData.err);
 			}
@@ -40,7 +38,8 @@ const CheckoutPage = () => {
 				dispatch(actions.resetCart());
 				navigate('/');
 			}
-		});
+		};
+		submitRequest(ENDPOINTS.checkout, options, applyData);
 	};
 
 	return (
